@@ -18,7 +18,7 @@ public class QuestionController {
     private QuestionRepo questionRepository;
 
     @GetMapping("/")
-    public Page<Questions> getQuestions(Pageable pageable){
+    public Page<Questions> getQuestions(Pageable pageable) {
         return questionRepository.findAll(pageable);
     }
 
@@ -40,8 +40,21 @@ public class QuestionController {
                     questionRepository.delete(question);
                     return ResponseEntity.ok().build();
                 });
+
+
     }
 
 
+
+    @PutMapping("/edit/{questionId}")
+    public Optional<Questions> updateQuestion(@PathVariable Long questionId,
+                                              @Valid @RequestBody Questions questionRequest) {
+        return questionRepository.findById(questionId)
+                .map(question -> {
+                    question.setTitle(questionRequest.getTitle());
+                    question.setDescription(questionRequest.getDescription());
+                    return questionRepository.save(question);
+                });
+    }
 
 }
